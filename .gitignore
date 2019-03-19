@@ -1,0 +1,14 @@
+/target/
+/.project
+/.settings/
+/.classpath
+/.tern-project
+/.factorypath
+/logs/
+/build/
+/.apt_generated/
+/.springBeans
+/.pmdruleset.xml
+/.pmd
+/.idea/
+*.iml
