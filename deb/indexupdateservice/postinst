@@ -7,10 +7,10 @@ case "$1" in
     configure)
         # create a [[artifactId]] group and user
         if ! getent passwd [[artifactId]] >/dev/null 2>&1; then
-                addgroup --system --gid 533 [[artifactId]]
-                adduser --system --uid 533 --gid 533 --no-create-home [[artifactId]]
+                addgroup --system --gid 809 [[artifactId]]
+                adduser --system --uid 809 --gid 809 --no-create-home [[artifactId]]
         fi
-        
+
         chown -R [[artifactId]]:[[artifactId]] /var/log/SBB/[[artifactId]]
         chown -R [[artifactId]]:[[artifactId]] /etc/SBB/[[artifactId]]
         chown -R [[artifactId]]:[[artifactId]] /usr/local/SBB/usr/local/[[artifactId]]
@@ -22,7 +22,7 @@ case "$1" in
         chown [[artifactId]] /etc/authbind/byport/80
         chown [[artifactId]] /etc/authbind/byport/443
     ;;
-	
+
     abort-upgrade|abort-remove|abort-deconfigure)
     ;;
 

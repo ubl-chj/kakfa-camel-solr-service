@@ -7,7 +7,7 @@ filebeat:
     # Each - is a prospector. Below are the prospector specific configurations
     - input_type: log
       paths:
-        - /var/log/SBB/schottbackend/*.log
+        - /var/log/SBB/indexupdateservice/*.log
       fields.app_id: imd
 
       scan_frequency: 20s
@@ -42,7 +42,7 @@ filebeat:
   # matching any regular expression from the list. The include_lines is called before
   # exclude_lines. By default, no lines are dropped.
       exclude_lines: ["^(2[0-9]{3}(-[0-9]{2}){2} [0-9]{2}(:[0-9]{2}){2}.[0-9]{3} DEBUG)", "^(2[0-9]{3}(-[0-9]{2}){2} [0-9]{2}(:[0-9]{2}){2}.[0-9]{3}  INFO)", "^[[:blank:]]+|^Caused"]
-  
+
   # Include lines. A list of regular expressions to match. It exports the lines that are
   # matching any regular expression from the list. The include_lines is called before
   # exclude_lines. By default, all the lines are exported.

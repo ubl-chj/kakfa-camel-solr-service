@@ -1,4 +1,4 @@
-/var/log/SBB/schottbackend/*log {
+/var/log/SBB/indexupdateservice/*log {
         daily
         missingok
         rotate 90
