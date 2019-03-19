@@ -13,9 +13,10 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>indexupdateservice</name>
 	<description>Index Update Service</description>
+	<packaging>war</packaging>
 
 	<properties>
-		<java.version>1.11</java.version>
+		<java.version>11</java.version>
 		<spring-cloud.version>Greenwich.SR1</spring-cloud.version>
 		<maven-release-plugin.version>2.5.3</maven-release-plugin.version>
 		<jacoco-maven-plugin.version>0.8.2</jacoco-maven-plugin.version>
@@ -60,11 +61,6 @@
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-spring-boot-starter</artifactId>
-			<version>2.23.1</version>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-config</artifactId>
 		</dependency>
@@ -93,6 +89,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-json</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
@@ -100,6 +100,11 @@
 			<groupId>org.springframework.kafka</groupId>
 			<artifactId>spring-kafka-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.elasticsearch.client</groupId>
+			<artifactId>elasticsearch-rest-high-level-client</artifactId>
+			<version>6.6.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
@@ -453,16 +458,6 @@
 									<type>link</type>
 									<symlink>true</symlink>
 									<linkName>
-										/usr/local/SBB/usr/local/${project.artifactId}/application-continuous-integration.properties
-									</linkName>
-									<linkTarget>
-										/etc/SBB/${project.artifactId}/application-continuous-integration.properties
-									</linkTarget>
-								</data>
-								<data>
-									<type>link</type>
-									<symlink>true</symlink>
-									<linkName>
 										/usr/local/SBB/usr/local/${project.artifactId}/application-dev.properties
 									</linkName>
 									<linkTarget>/etc/SBB/${project.artifactId}/application-dev.properties</linkTarget>
@@ -474,15 +469,6 @@
 										/usr/local/SBB/usr/local/${project.artifactId}/application-prod.properties
 									</linkName>
 									<linkTarget>/etc/SBB/${project.artifactId}/application-prod.properties
-									</linkTarget>
-								</data>
-								<data>
-									<type>link</type>
-									<symlink>true</symlink>
-									<linkName>
-										/usr/local/SBB/usr/local/${project.artifactId}/application-staging.properties
-									</linkName>
-									<linkTarget>/etc/SBB/${project.artifactId}/application-staging.properties
 									</linkTarget>
 								</data>
 								<data>
@@ -516,16 +502,14 @@
 						</goals>
 						<id>schottbackend-all</id>
 						<configuration>
-							<name>Staatsbibliothek zu Berlin Schott Backend Import/Export -
-								Virtual Paket hängt von allen schottbackend Komponenten
-							</name>
+							<name>Staatsbibliothek zu Berlin Index Update Service</name>
 							<classifier>all</classifier>
 							<deb>${project.build.directory}/${project.artifactId}-all_${project.version}_all.deb
 							</deb>
 							<changesOut>
 								${project.build.directory}/${project.artifactId}-all_${project.version}_all.changes
 							</changesOut>
-							<controlDir>${basedir}/src/deb/schottbackend-all-metapackage</controlDir>
+							<controlDir>${basedir}/src/deb/indexupdateservice</controlDir>
 							<snapshotExpand>true</snapshotExpand>
 							<signPackage>${sign.package}</signPackage>
 							<signMethod>dpkg-sig</signMethod>
@@ -545,9 +529,9 @@
 						<goals>
 							<goal>jdeb</goal>
 						</goals>
-						<id>schottbackend-filebeat</id>
+						<id>indexupdateservice-filebeat</id>
 						<configuration>
-							<name>Staatsbibliothek zu Berlin Schott Backend Import/Export -
+							<name>Staatsbibliothek zu Berlin Index Update Service
 								Filebeat Konfiguration
 							</name>
 							<classifier>filebeat</classifier>
@@ -557,7 +541,7 @@
 							<changesOut>
 								${project.build.directory}/${project.artifactId}-filebeat_${project.version}.changes
 							</changesOut>
-							<controlDir>${basedir}/src/deb/schottbackend-filebeat</controlDir>
+							<controlDir>${basedir}/src/deb/indexupdateservice-filebeat</controlDir>
 							<snapshotExpand>true</snapshotExpand>
 							<signPackage>${sign.package}</signPackage>
 							<signMethod>dpkg-sig</signMethod>
@@ -596,9 +580,9 @@
 						<goals>
 							<goal>jdeb</goal>
 						</goals>
-						<id>schottbackend-nagios</id>
+						<id>indexupdateservice-nagios</id>
 						<configuration>
-							<name>Staatsbibliothek zu Berlin Schott Backend Import/Export -
+							<name>Staatsbibliothek zu Berlin Index Update Service -
 								Nagios Konfiguration
 							</name>
 							<classifier>nagios</classifier>
@@ -607,7 +591,7 @@
 							<changesOut>
 								${project.build.directory}/${project.artifactId}-nagios_${project.version}.changes
 							</changesOut>
-							<controlDir>${basedir}/src/deb/schottbackend-nagios</controlDir>
+							<controlDir>${basedir}/src/deb/indexupdateservice-nagios</controlDir>
 							<snapshotExpand>true</snapshotExpand>
 							<signPackage>${sign.package}</signPackage>
 							<signMethod>dpkg-sig</signMethod>
