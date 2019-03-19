@@ -1,0 +1,10 @@
+/var/log/SBB/schottbackend/*log {
+        daily
+        missingok
+        rotate 90
+        sharedscripts
+        compress
+        delaycompress
+        notifempty
+        copytruncate
+}

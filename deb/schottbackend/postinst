@@ -1,0 +1,42 @@
+#!/bin/sh
+
+set -e
+
+
+case "$1" in
+    configure)
+        # create a [[artifactId]] group and user
+        if ! getent passwd [[artifactId]] >/dev/null 2>&1; then
+                addgroup --system --gid 533 [[artifactId]]
+                adduser --system --uid 533 --gid 533 --no-create-home [[artifactId]]
+        fi
+        
+        chown -R [[artifactId]]:[[artifactId]] /var/log/SBB/[[artifactId]]
+        chown -R [[artifactId]]:[[artifactId]] /etc/SBB/[[artifactId]]
+        chown -R [[artifactId]]:[[artifactId]] /usr/local/SBB/usr/local/[[artifactId]]
+
+        touch /etc/authbind/byport/80
+        touch /etc/authbind/byport/443
+        chmod 500 /etc/authbind/byport/80
+        chmod 500 /etc/authbind/byport/443
+        chown [[artifactId]] /etc/authbind/byport/80
+        chown [[artifactId]] /etc/authbind/byport/443
+    ;;
+	
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+# Start [[artifactId]]
+
+update-rc.d [[artifactId]] defaults 75
+service [[artifactId]] stop >/dev/null 2>&1 || true
+service [[artifactId]] start || true
+
+exit 0
+
