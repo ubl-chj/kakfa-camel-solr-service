@@ -1,4 +1,4 @@
-package staatsbibliothekberlin.hsp.indexUpdateService;
+package staatsbibliothek.berlin.hsp.indexUpdateService;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
