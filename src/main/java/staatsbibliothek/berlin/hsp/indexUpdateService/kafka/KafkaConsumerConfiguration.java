@@ -2,8 +2,12 @@ package staatsbibliothek.berlin.hsp.indexUpdateService.kafka;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +25,8 @@ import org.springframework.kafka.support.serializer.JsonDeserializer;
 @EnableKafka
 @Configuration
 public class KafkaConsumerConfiguration {
+
+    private static final Logger logger = LoggerFactory.getLogger(KafkaConsumerConfiguration.class);
 
     @Value("${spring.kafka.bootstrap-servers}")
     String bootstrapAddress;
@@ -51,6 +57,7 @@ public class KafkaConsumerConfiguration {
 
         DefaultKafkaConsumerFactory defaultKafkaConsumerFactory = new DefaultKafkaConsumerFactory<>(
                 props);
+        logger.info("Consumer Properties are loaded {}", props);
 
         return defaultKafkaConsumerFactory;
     }
@@ -65,5 +72,11 @@ public class KafkaConsumerConfiguration {
         factory.getContainerProperties().setAckMode(AckMode.MANUAL_IMMEDIATE);
 
         return factory;
+    }
+
+    @Bean
+    public NewTopic hspIndex() {
+
+        return new NewTopic("hsp-index", 1, (short) 2);
     }
 }
