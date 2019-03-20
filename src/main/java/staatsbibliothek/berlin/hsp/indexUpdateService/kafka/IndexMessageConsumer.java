@@ -19,7 +19,7 @@ public class IndexMessageConsumer implements AcknowledgingMessageListener {
 
 
   @Override
-  @KafkaListener(topics = "hsp-index", groupId = "hsp")
+  @KafkaListener(topics = {"hsp-index"}, groupId = "hsp")
   public void onMessage(ConsumerRecord data, Acknowledgment acknowledgment) {
 
     logger.info("Recieving Record at offset {} with topic {} key {} and data {} ", data.offset(),
