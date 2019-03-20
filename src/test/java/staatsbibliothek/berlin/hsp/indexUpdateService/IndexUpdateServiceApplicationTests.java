@@ -1,4 +1,4 @@
-package staatsbibliothekberlin.hsp.indexUpdateService;
+package staatsbibliothek.berlin.hsp.indexUpdateService;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
