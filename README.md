@@ -47,12 +47,6 @@ Auf welchen Systemen laufen die Systemkomponenten.
 ## 8.1 Ansprechpartner , Service Level
 Verwantwortlich für die Pflege ist IDM 2.2.  
 ## 8.2 Installation / Konfiguration ##
-Mit folgenden Befehl wird ein neues Debian Packet auf dem Artefaktserver erstellt. 
-
-    mvn package deploy:deploy
-    
-
-        
 ## 8.3 Wiederherstellung ##
 # 9. Entwurfsentscheidungen
 Wichtige Architekturentscheidungen und Gründe. 
