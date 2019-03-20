@@ -48,10 +48,7 @@ public class KafkaConsumerConfiguration {
                 StringDeserializer.class);
         props.put(
                 ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
-                JsonDeserializer.class);
-        props.put(
-                JsonDeserializer.TRUSTED_PACKAGES,
-                "de.staatsbibliothek.berlin.hsp.entity");
+                StringDeserializer.class);
         props.put(ConsumerConfig.DEFAULT_ISOLATION_LEVEL, "read_comitted");
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
 
