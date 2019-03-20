@@ -15,35 +15,35 @@ import org.springframework.stereotype.Component;
 @Component
 public class IndexMessageConsumer implements AcknowledgingMessageListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(IndexMessageConsumer.class);
+  private static final Logger logger = LoggerFactory.getLogger(IndexMessageConsumer.class);
 
 
-    @Override
-    @KafkaListener(topics = "hsp-index", groupId = "hsp")
-    public void onMessage(ConsumerRecord data, Acknowledgment acknowledgment) {
+  @Override
+  @KafkaListener(topics = "hsp-index", groupId = "hsp")
+  public void onMessage(ConsumerRecord data, Acknowledgment acknowledgment) {
 
-        logger.info("Recieving Record at offset {} with topic {} key {} and data {} ", data.offset(),
-                data.topic(), data.key());
+    logger.info("Recieving Record at offset {} with topic {} key {} and data {} ", data.offset(),
+        data.topic(), data.key(), data.value());
 
-        logger.debug("Processing something ...");
+    logger.debug("Processing something ...");
 
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        /**
-         if (((KOD) data.value()).getId() == 9) {
-         throw new RuntimeException("oops");
-         }**/
-
-        acknowledgment.acknowledge();
+    try {
+      Thread.sleep(500);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
     }
 
-    @Override
-    public void onMessage(Object data) {
+    /**
+     if (((KOD) data.value()).getId() == 9) {
+     throw new RuntimeException("oops");
+     }**/
 
-    }
+    acknowledgment.acknowledge();
+  }
+
+  @Override
+  public void onMessage(Object data) {
+
+  }
 }
 
