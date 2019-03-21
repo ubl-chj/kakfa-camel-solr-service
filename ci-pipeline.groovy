@@ -64,7 +64,7 @@ pipeline {
     }
     post {
         failure {
-            mail to: 'konrad.eichstaedt@sbb.spk-berlin.de,Johnson@UB.uni-leipzig.de', subject: 'SRU-Client Pipeline failed', body: "${env.BUILD_URL}"
+            mail to: 'konrad.eichstaedt@sbb.spk-berlin.de', subject: 'SRU-Client Pipeline failed', body: "${env.BUILD_URL}"
         }
     }
 }
