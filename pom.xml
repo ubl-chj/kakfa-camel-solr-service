@@ -302,6 +302,9 @@
         <groupId>org.owasp</groupId>
         <artifactId>dependency-check-maven</artifactId>
         <version>5.0.0-M2</version>
+        <configuration>
+          <format>ALL</format>
+        </configuration>
         <executions>
           <execution>
             <goals>
