@@ -299,6 +299,18 @@
         </configuration>
       </plugin>
       <plugin>
+        <groupId>org.owasp</groupId>
+        <artifactId>dependency-check-maven</artifactId>
+        <version>3.3.4</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <artifactId>jdeb</artifactId>
         <groupId>org.vafer</groupId>
         <version>${jdeb.version}</version>
