@@ -1,0 +1,9 @@
+solr:
+  host: localhost
+  port: 8983
+  scheme: http
+  context: solr
+  core: hsp
+kafka:
+  bootstrap-servers: b-dev1044.pk.de:9092,b-dev1045.pk.de:9092,b-dev1048.pk.de:9092
+

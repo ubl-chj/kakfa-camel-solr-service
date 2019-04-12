@@ -17,12 +17,11 @@ public class IndexMessageConsumer implements AcknowledgingMessageListener {
 
   private static final Logger logger = LoggerFactory.getLogger(IndexMessageConsumer.class);
 
-
   @Override
   @KafkaListener(topics = {"hsp-index"}, groupId = "hsp")
   public void onMessage(ConsumerRecord data, Acknowledgment acknowledgment) {
 
-    logger.info("Recieving Record at offset {} with topic {} key {} and data {} ", data.offset(),
+    logger.info("Receiving Record at offset {} with topic {} key {} and data {} ", data.offset(),
         data.topic(), data.key(), data.value());
 
     logger.debug("Processing something ...");

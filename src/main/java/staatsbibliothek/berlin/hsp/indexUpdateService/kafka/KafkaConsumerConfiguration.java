@@ -18,10 +18,6 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ContainerProperties.AckMode;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
-/**
- * @author Piotr.Czarnecki@sbb.spk-berlin.de
- * @since 17.01.19
- */
 @EnableKafka
 @Configuration
 public class KafkaConsumerConfiguration {
@@ -49,7 +45,6 @@ public class KafkaConsumerConfiguration {
         props.put(
                 ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
                 StringDeserializer.class);
-        props.put(ConsumerConfig.DEFAULT_ISOLATION_LEVEL, "read_comitted");
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
 
         DefaultKafkaConsumerFactory defaultKafkaConsumerFactory = new DefaultKafkaConsumerFactory<>(
