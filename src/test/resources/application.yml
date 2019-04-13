@@ -1,3 +1,9 @@
+solr:
+  host: localhost
+  port: 8983
+  scheme: http
+  context: solr
+  core: hsp
 kafka:
   bootstrap-servers: ${spring.embedded.kafka.brokers}
   topic:

@@ -1,5 +1,14 @@
 package staatsbibliothek.berlin.hsp.indexUpdateService.kafka;
 
+import static org.apache.camel.Exchange.FILE_NAME;
+import static org.apache.camel.Exchange.HTTP_RESPONSE_CODE;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.UUID;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,7 +33,7 @@ public class IndexUpdateServiceApplicationTests {
     private static final Logger LOGGER = LoggerFactory.getLogger(IndexUpdateServiceApplicationTests.class);
     private static String SENDER_TOPIC = "sender.t";
 
-    @EndpointInject(uri = "mock:direct:docIndex")
+    @EndpointInject(uri = "mock:direct:serialize")
     private MockEndpoint mock;
 
     @Autowired
@@ -43,12 +52,16 @@ public class IndexUpdateServiceApplicationTests {
     public void testKafkaRoute() throws Exception {
         camelContext.start();
         try {
-            ActivityStream stream = new ActivityStream();
-            stream.setContext("https://www.w3.org/ns/activitystreams");
+            final ActivityStream stream = new ActivityStream();
+            stream.setSummary("This is a target document");
+            final Target target = new Target();
+            final UUID uuid = UUID.randomUUID();
+            target.setId(uuid.toString());
+            stream.setTarget(target);
+            LocalDateTime localDate = LocalDateTime.now();
+            stream.setPublished(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(localDate));
             producer.send(stream);
-            mock.await();
-            mock.expectedMessageCount(1);
-            mock.message(0).body(String.class).contains("https://www.w3.org/ns/activitystreams");
+            mock.expectedFileExists("/tmp/output.log/" + uuid.toString());
             mock.assertIsSatisfied();
         } catch (Exception e) {
             e.printStackTrace();

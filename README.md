@@ -47,6 +47,11 @@ Auf welchen Systemen laufen die Systemkomponenten.
 ## 8.1 Ansprechpartner , Service Level
 Verwantwortlich für die Pflege ist IDM 2.2.  
 ## 8.2 Installation / Konfiguration ##
+To start a Solr cluster and create the "hsp" collection:
+```bash
+$ docker-compose up
+$ docker exec solr1 /opt/solr/bin/solr create_collection -c hsp
+```
 ## 8.3 Wiederherstellung ##
 # 9. Entwurfsentscheidungen
 Wichtige Architekturentscheidungen und Gründe. 
