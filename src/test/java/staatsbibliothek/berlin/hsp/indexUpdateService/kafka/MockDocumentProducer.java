@@ -10,9 +10,9 @@ public class MockDocumentProducer {
             LoggerFactory.getLogger(MockDocumentProducer.class);
 
     @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
+    private KafkaTemplate<String, ActivityStream> kafkaTemplate;
 
-    public void send(String payload) {
+    public void send(ActivityStream payload) {
         LOGGER.info("sending payload='{}'", payload);
         kafkaTemplate.send("sender.t", payload);
     }

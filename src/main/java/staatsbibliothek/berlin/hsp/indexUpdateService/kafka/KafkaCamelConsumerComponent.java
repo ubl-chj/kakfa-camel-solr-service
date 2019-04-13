@@ -64,7 +64,9 @@ public class KafkaCamelConsumerComponent extends RouteBuilder {
                 .to("direct:docIndex");
         from("direct:docIndex").routeId("DocIndex")
                 .process(exchange -> {
-                // TODO
+                    final String jsonString = exchange.getIn()
+                            .getBody(String.class);
+                    LOGGER.info("message body {}", jsonString);
                 });
     }
 }
