@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package staatsbibliothek.berlin.hsp.indexUpdateService.kafka;
+package staatsbibliothek.berlin.hsp.indexUpdateService;
 
 import org.apache.solr.client.solrj.beans.Field;
 

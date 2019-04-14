@@ -1,4 +1,4 @@
-package staatsbibliothek.berlin.hsp.indexUpdateService.kafka;
+package staatsbibliothek.berlin.hsp.indexUpdateService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

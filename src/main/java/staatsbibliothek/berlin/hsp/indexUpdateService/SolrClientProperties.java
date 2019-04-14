@@ -1,4 +1,4 @@
-package staatsbibliothek.berlin.hsp.indexUpdateService.kafka;
+package staatsbibliothek.berlin.hsp.indexUpdateService;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

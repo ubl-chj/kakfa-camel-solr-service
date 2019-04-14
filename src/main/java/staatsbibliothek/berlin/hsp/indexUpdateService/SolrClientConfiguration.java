@@ -1,4 +1,4 @@
-package staatsbibliothek.berlin.hsp.indexUpdateService.kafka;
+package staatsbibliothek.berlin.hsp.indexUpdateService;
 
 import static java.io.File.separator;
 

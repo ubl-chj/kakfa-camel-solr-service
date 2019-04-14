@@ -11,7 +11,7 @@
   </parent>
   <groupId>staatsbibliothek-berlin.hsp</groupId>
   <artifactId>indexupdateservice</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.1.0-SNAPSHOT</version>
   <name>indexupdateservice</name>
   <description>Index Update Service</description>
   <packaging>war</packaging>
@@ -261,9 +261,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${maven-surefire-plugin.version}</version>
-        <configuration>
-          <runOrder>reversealphabetical</runOrder>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

@@ -1,4 +1,4 @@
-package staatsbibliothek.berlin.hsp.indexUpdateService.kafka;
+package staatsbibliothek.berlin.hsp.indexUpdateService;
 
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;
