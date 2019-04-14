@@ -6,14 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 
 public class MockDocumentProducer {
-    private static final Logger LOGGER =
-            LoggerFactory.getLogger(MockDocumentProducer.class);
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(MockDocumentProducer.class);
 
-    @Autowired
-    private KafkaTemplate<String, ActivityStream> kafkaTemplate;
+  @Autowired
+  private KafkaTemplate<String, ActivityStream> kafkaTemplate;
 
-    public void send(ActivityStream payload) {
-        LOGGER.info("sending payload='{}'", payload);
-        kafkaTemplate.send("sender.t", payload);
-    }
+  public void send(ActivityStream payload) {
+    LOGGER.info("sending payload='{}'", payload);
+    kafkaTemplate.send("sender.t", payload);
+  }
 }

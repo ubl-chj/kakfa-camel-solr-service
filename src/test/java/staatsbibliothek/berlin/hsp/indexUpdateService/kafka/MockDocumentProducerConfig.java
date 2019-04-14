@@ -16,31 +16,31 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 @Configuration
 public class MockDocumentProducerConfig {
 
-    @Value("${kafka.bootstrap-servers}")
-    private String bootstrapServers;
+  @Value("${kafka.bootstrap-servers}")
+  private String bootstrapServers;
 
-    @Bean
-    public Map<String, Object> producerConfigs() {
-        Map<String, Object> props = new HashMap<>();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        return props;
-    }
+  @Bean
+  public Map<String, Object> producerConfigs() {
+    Map<String, Object> props = new HashMap<>();
+    props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+    props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+    props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+    return props;
+  }
 
-    @Bean
-    public ProducerFactory<String, ActivityStream> producerFactory() {
-        return new DefaultKafkaProducerFactory<>(producerConfigs());
-    }
+  @Bean
+  public ProducerFactory<String, ActivityStream> producerFactory() {
+    return new DefaultKafkaProducerFactory<>(producerConfigs());
+  }
 
-    @Bean
-    public KafkaTemplate<String, ActivityStream> kafkaTemplate() {
-        return new KafkaTemplate<>(producerFactory());
-    }
+  @Bean
+  public KafkaTemplate<String, ActivityStream> kafkaTemplate() {
+    return new KafkaTemplate<>(producerFactory());
+  }
 
-    @Bean
-    public MockDocumentProducer producer() {
-        return new MockDocumentProducer();
-    }
+  @Bean
+  public MockDocumentProducer producer() {
+    return new MockDocumentProducer();
+  }
 }
 

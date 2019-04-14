@@ -11,18 +11,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package staatsbibliothek.berlin.hsp.indexUpdateService.kafka;
 
-import static java.io.File.separator;
+import static java.net.URLEncoder.encode;
 import static org.apache.camel.Exchange.FILE_NAME;
-import static org.apache.camel.Exchange.HTTP_RESPONSE_CODE;
 import static org.apache.camel.LoggingLevel.INFO;
+import static org.trellisldp.camel.ActivityStreamProcessor.ACTIVITY_STREAM_OBJECT_ID;
+import static org.trellisldp.camel.ActivityStreamProcessor.ACTIVITY_STREAM_TYPE;
 
-import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
@@ -31,58 +32,72 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.trellisldp.camel.ActivityStreamProcessor;
 
 @Component
 public class KafkaCamelConsumerComponent extends RouteBuilder {
-    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaCamelConsumerComponent.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(KafkaCamelConsumerComponent.class);
+  private HttpSolrClient solrClient;
+  private static final String KAFKA_ROUTE_URI =
+      "kafka:{{consumer.topic}}?brokers={{kafka.bootstrap-servers}}"
+          + "&maxPollRecords={{consumer.maxPollRecords}}"
+          + "&consumersCount={{consumer.consumersCount}}"
+          + "&seekTo={{consumer.seekTo}}"
+          + "&groupId={{consumer.group}}";
 
-    private static final String HTTP_ACCEPT = "Accept";
-    private HttpSolrClient solrClient;
+  @Autowired
+  public KafkaCamelConsumerComponent(HttpSolrClient solrClient) {
+    this.solrClient = solrClient;
+  }
 
-    @Autowired
-    public KafkaCamelConsumerComponent(SolrSearchProperties solrProperties) {
-        String host = solrProperties.getHost();
-        Integer port = solrProperties.getPort();
-        String scheme = solrProperties.getScheme();
-        String context = solrProperties.getContext();
-        String urlString = scheme + ":" + separator + separator + host + ":"
-                + port + separator + context;
-        this.solrClient = new HttpSolrClient.Builder(urlString).build();
-    }
+  @Override
+  public void configure() {
+    LOGGER.info("About to start route: Kafka Server -> Log ");
+    CamelContext context = new DefaultCamelContext();
 
-    @Override
-    public void configure() {
-        LOGGER.info("About to start route: Kafka Server -> Log ");
-        CamelContext context = new DefaultCamelContext();
-
-        from("kafka:{{consumer.topic}}?brokers={{bootstrap-server}}"
-                + "&maxPollRecords={{consumer.maxPollRecords}}"
-                + "&consumersCount={{consumer.consumersCount}}"
-                + "&seekTo={{consumer.seekTo}}"
-                + "&groupId={{consumer.group}}")
-                .routeId("FromKafka")
-                .unmarshal()
-                .json(JsonLibrary.Jackson, ActivityStream.class)
-                .to("direct:docIndex");
-        from("direct:docIndex").routeId("DocIndex")
-                .process(exchange -> {
-                    final ActivityStream stream = exchange.getIn().getBody(ActivityStream.class);
-                    final UpdateResponse response = solrClient.addBean("hsp", stream);
-                    solrClient.commit("hsp");
-                    exchange.getIn().setHeader(FILE_NAME, stream.getTarget().getId());
-                })
-                .to("direct:serialize");
-        from("direct:serialize")
-                .process(exchange -> {
-                    exchange.getOut().setBody(exchange.getIn().getBody(ActivityStream.class));
-                    final String filename = exchange.getIn().getHeader(FILE_NAME, String.class);
-                    exchange.getOut().setHeader(FILE_NAME, filename);
-                })
-                .marshal()
-                .json(JsonLibrary.Jackson, true)
-                .log(INFO, LOGGER, "Filename: ${headers[CamelFileName]}")
-                .to("file://{{serialization.log}}");
-    }
+    from(KAFKA_ROUTE_URI)
+        .routeId("FromKafka")
+        .unmarshal()
+        .json(JsonLibrary.Jackson, ActivityStream.class)
+        .process(new ActivityStreamProcessor())
+        .filter(header(ACTIVITY_STREAM_OBJECT_ID).isNotNull())
+        .process(e -> e.getIn().setHeader(
+            "SolrSearchId",
+            encode(
+                e.getIn().getHeader(ACTIVITY_STREAM_OBJECT_ID, String.class),
+                StandardCharsets.UTF_8)))
+        .choice()
+        .when(header(ACTIVITY_STREAM_TYPE).contains("Delete"))
+        .to("direct:delete.solr")
+        .otherwise()
+        .to("direct:update.solr");
+    from("direct:delete.solr").routeId("SolrDelete")
+        .log(INFO, LOGGER, "Deleting ${headers.ActivityStreamObjectId} from Solr")
+        .process(exchange -> {
+          final String collection = getContext().resolvePropertyPlaceholders("{{consumer.group}}");
+          final String id = exchange.getIn().getHeader(ACTIVITY_STREAM_OBJECT_ID, String.class);
+          solrClient.deleteById(collection, id);
+          solrClient.commit(collection);
+        });
+    from("direct:update.solr").routeId("SolrUpdate")
+        .log(INFO, LOGGER, "Updating ${headers.ActivityStreamObjectId} in Solr")
+        .process(exchange -> {
+          final String collection = getContext().resolvePropertyPlaceholders("{{consumer.group}}");
+          final ActivityStream stream = exchange.getIn().getBody(ActivityStream.class);
+          final UpdateResponse response = solrClient.addBean(collection, stream);
+          solrClient.commit(collection);
+        })
+        .to("direct:serialize");
+    from("direct:serialize")
+        .process(exchange -> {
+          exchange.getOut().setBody(exchange.getIn().getBody(ActivityStream.class));
+          final String filename = exchange.getIn().getHeader(
+              ACTIVITY_STREAM_OBJECT_ID, String.class);
+          exchange.getOut().setHeader(FILE_NAME, filename);
+        })
+        .marshal()
+        .json(JsonLibrary.Jackson, true)
+        .log(INFO, LOGGER, "Filename: ${headers[CamelFileName]}")
+        .to("file://{{serialization.log}}");
+  }
 }
 
