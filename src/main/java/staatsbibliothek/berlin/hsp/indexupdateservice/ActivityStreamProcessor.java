@@ -1,4 +1,4 @@
-package staatsbibliothek.berlin.hsp.indexUpdateService;
+package staatsbibliothek.berlin.hsp.indexupdateservice;
 
 import java.util.List;
 import java.util.Objects;

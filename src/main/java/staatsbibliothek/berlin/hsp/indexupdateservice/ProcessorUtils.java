@@ -1,4 +1,4 @@
-package staatsbibliothek.berlin.hsp.indexUpdateService;
+package staatsbibliothek.berlin.hsp.indexupdateservice;
 
 import static java.util.Arrays.stream;
 import static java.util.Collections.emptyList;

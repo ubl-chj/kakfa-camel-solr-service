@@ -1,4 +1,4 @@
-package staatsbibliothek.berlin.hsp.indexUpdateService;
+package staatsbibliothek.berlin.hsp.indexupdateservice;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

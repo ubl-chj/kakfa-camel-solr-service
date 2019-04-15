@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package staatsbibliothek.berlin.hsp.indexUpdateService;
+package staatsbibliothek.berlin.hsp.indexupdateservice;
 
 import static java.net.URLEncoder.encode;
 import static org.apache.camel.Exchange.FILE_NAME;

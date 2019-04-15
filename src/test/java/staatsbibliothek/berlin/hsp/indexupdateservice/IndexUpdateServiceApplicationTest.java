@@ -1,4 +1,4 @@
-package staatsbibliothek.berlin.hsp.indexUpdateService;
+package staatsbibliothek.berlin.hsp.indexupdateservice;
 
 import static junit.framework.TestCase.assertEquals;
 
@@ -33,8 +33,7 @@ import org.springframework.test.annotation.DirtiesContext;
 @SpringBootTest
 @DirtiesContext
 @MockEndpoints
-public class SolrUpdateTest {
-  private ActivityStream stream;
+public class IndexUpdateServiceApplicationTest {
   private static final String SENDER_TOPIC = "sender.t";
   @ClassRule
   public static EmbeddedKafkaRule embeddedKafka = new EmbeddedKafkaRule(
@@ -43,6 +42,11 @@ public class SolrUpdateTest {
   CamelContext camelContext;
   @Autowired
   RouteBuilder kafkaCamelConsumerComponent;
+  private ActivityStream stream;
+  @EndpointInject(uri = "mock:direct:serialize")
+  private MockEndpoint mockSerialize;
+  @EndpointInject(uri = "mock:direct:delete.solr")
+  private MockEndpoint mockDelete;
   @EndpointInject(uri = "mock:direct:update.solr")
   private MockEndpoint mockUpdate;
   @Autowired
@@ -62,17 +66,35 @@ public class SolrUpdateTest {
   }
 
   @Test
-  public void testDocumentIsUpdated() {
+  public void testDocumentIsSerialized() {
+    try {
+      producer.send(stream);
+      camelContext.start();
+      mockSerialize.expectedFileExists("/tmp/output.log/" + stream.getObjectId());
+      mockSerialize.assertIsSatisfied();
+      camelContext.stop();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Test
+  public void testDocumentIsDeleted() {
     final CountDownLatch latch = new CountDownLatch(3);
-    mockUpdate.whenAnyExchangeReceived(exchange -> latch.countDown());
+    mockDelete.whenAnyExchangeReceived(exchange -> latch.countDown());
     try {
       camelContext.start();
       producer.send(stream);
-      latch.await(2, TimeUnit.SECONDS);
+      latch.await(1, TimeUnit.SECONDS);
+      stream.setType("Delete");
+      producer.send(stream);
+      latch.await(1, TimeUnit.SECONDS);
       final String docId = stream.getObjectId();
       final QueryResponse response = solrClient.query("hsp", buildQueryParams(docId));
       final SolrDocumentList documents = response.getResults();
-      assertEquals(1, documents.getNumFound());
+      assertEquals(0, documents.getNumFound());
+      mockDelete.expectedMessageCount(1);
+      mockDelete.assertIsSatisfied();
       camelContext.stop();
     } catch (Exception e) {
       e.printStackTrace();
