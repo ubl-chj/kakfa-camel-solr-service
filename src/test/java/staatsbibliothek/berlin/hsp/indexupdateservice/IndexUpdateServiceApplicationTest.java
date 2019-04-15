@@ -34,7 +34,8 @@ import org.springframework.test.annotation.DirtiesContext;
 @DirtiesContext
 @MockEndpoints
 public class IndexUpdateServiceApplicationTest {
-  private static final String SENDER_TOPIC = "sender.t";
+  private static final String SENDER_TOPIC = "hsp.t";
+
   @ClassRule
   public static EmbeddedKafkaRule embeddedKafka = new EmbeddedKafkaRule(
       1, true, SENDER_TOPIC);

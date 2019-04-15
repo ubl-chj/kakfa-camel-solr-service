@@ -38,11 +38,11 @@ public class KafkaCamelConsumerComponent extends RouteBuilder {
   private static final Logger LOGGER = LoggerFactory.getLogger(KafkaCamelConsumerComponent.class);
   private HttpSolrClient solrClient;
   private static final String KAFKA_ROUTE_URI =
-      "kafka:{{consumer.topic}}?brokers={{kafka.bootstrap-servers}}"
-          + "&maxPollRecords={{consumer.maxPollRecords}}"
-          + "&consumersCount={{consumer.consumersCount}}"
-          + "&seekTo={{consumer.seekTo}}"
-          + "&groupId={{consumer.group}}";
+      "kafka:{{kafka.topic}}?brokers={{kafka.bootstrap-servers}}"
+          + "&maxPollRecords={{kafka.consumer.maxPollRecords}}"
+          + "&consumersCount={{kafka.consumer.consumersCount}}"
+          + "&seekTo={{kafka.consumer.seekTo}}"
+          + "&groupId={{kafka.consumer.group}}";
 
   @Autowired
   public KafkaCamelConsumerComponent(HttpSolrClient solrClient) {
@@ -73,7 +73,7 @@ public class KafkaCamelConsumerComponent extends RouteBuilder {
     from("direct:delete.solr").routeId("SolrDelete")
         .log(INFO, LOGGER, "Deleting ${headers.ActivityStreamObjectId} from Solr")
         .process(exchange -> {
-          final String collection = getContext().resolvePropertyPlaceholders("{{consumer.group}}");
+          final String collection = getContext().resolvePropertyPlaceholders("{{kafka.consumer.group}}");
           final String id = exchange.getIn().getHeader(ACTIVITY_STREAM_OBJECT_ID, String.class);
           solrClient.deleteById(collection, id);
           solrClient.commit(collection);
@@ -81,7 +81,7 @@ public class KafkaCamelConsumerComponent extends RouteBuilder {
     from("direct:update.solr").routeId("SolrUpdate")
         .log(INFO, LOGGER, "Updating ${headers.ActivityStreamObjectId} in Solr")
         .process(exchange -> {
-          final String collection = getContext().resolvePropertyPlaceholders("{{consumer.group}}");
+          final String collection = getContext().resolvePropertyPlaceholders("{{kafka.consumer.group}}");
           final ActivityStream stream = exchange.getIn().getBody(ActivityStream.class);
           final UpdateResponse response = solrClient.addBean(collection, stream);
           solrClient.commit(collection);
@@ -97,7 +97,7 @@ public class KafkaCamelConsumerComponent extends RouteBuilder {
         .marshal()
         .json(JsonLibrary.Jackson, true)
         .log(INFO, LOGGER, "Filename: ${headers[CamelFileName]}")
-        .to("file://{{serialization.log}}");
+        .to("file://{{ius.serialization.log}}");
   }
 }
 

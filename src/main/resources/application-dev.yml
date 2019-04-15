@@ -1,0 +1,17 @@
+#development settings
+spring:
+  cloud:
+    config:
+      enabled: false
+eureka:
+  client:
+    region: potsdamerplatz
+    availabilityZones:
+      potsdamerplatz: one
+    registerWithEureka: false
+    fetchRegistry: false
+    preferSameZoneEureka: true
+    serviceUrl:
+      one: http://localhost:8761/serviceregistry/eureka/
+    healthcheck:
+      enabled: false

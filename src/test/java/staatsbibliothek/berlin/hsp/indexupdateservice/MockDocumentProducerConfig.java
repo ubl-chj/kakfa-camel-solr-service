@@ -19,6 +19,9 @@ public class MockDocumentProducerConfig {
   @Value("${kafka.bootstrap-servers}")
   private String bootstrapServers;
 
+  @Value("${kafka.topic}")
+  private String kafkaTopic;
+
   @Bean
   public Map<String, Object> producerConfigs() {
     Map<String, Object> props = new HashMap<>();

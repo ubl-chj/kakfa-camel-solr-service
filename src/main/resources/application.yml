@@ -6,4 +6,38 @@ solr:
   core: hsp
 kafka:
   bootstrap-servers: b-dev1044.pk.de:9092,b-dev1045.pk.de:9092,b-dev1048.pk.de:9092
+  dual.commit.enabled: false
+  offsets.storage: kafka
+  topic: hsp.t
+  consumer:
+    consumersCount: 1
+    group: hsp
+    maxPollRecords: 5000
+    seekTo: beginning
+
+ius:
+  serialization.log: /tmp/output.log
+
+spring:
+  application:
+    name: indexupdateservice
+  profiles:
+    active: dev
+
+info:
+  component: indexupdateservice
+  description: Handschriftenportal Index Update Service
+
+management:
+  endpoint:
+    shutdown:
+      enabled: false
+
+eureka:
+  instance:
+    appname: indexupdateservice
+    virtual-host-name: indexupdateservice
+    non-secure-port: 9295
+    non-secure-port-enabled: true
+    prefer-ip-address: false
 

@@ -1,0 +1,5 @@
+spring:
+  cloud:
+    config:
+      uri: http://serviceregistry.sbb.spk-berlin.de:8761/serviceregistry/configurationserver
+      label: indexupdateservice

@@ -6,5 +6,29 @@ solr:
   core: hsp
 kafka:
   bootstrap-servers: ${spring.embedded.kafka.brokers}
-  topic:
-    receiver: receiver.t
+  dual.commit.enabled: false
+  offsets.storage: kafka
+  topic: hsp.t
+  consumer:
+    consumersCount: 1
+    group: hsp
+    maxPollRecords: 5000
+    seekTo: beginning
+
+ius:
+  serialization.log: /tmp/output.log
+
+spring:
+  application:
+    name: indexupdateservice
+  profiles:
+    active: dev
+
+info:
+  component: indexupdateservice
+  description: Handschriftenportal Index Update Service
+
+management:
+  endpoint:
+    shutdown:
+      enabled: false

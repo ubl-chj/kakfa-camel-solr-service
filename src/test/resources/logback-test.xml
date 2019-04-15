@@ -5,7 +5,6 @@
             <pattern>%p %d{HH:mm:ss.SSS} \(%c{0}\) %m%n</pattern>
         </encoder>
     </appender>
-
     <logger name="staatsbibliothek.berlin" additivity="false" level="INFO">
         <appender-ref ref="STDOUT"/>
     </logger>
