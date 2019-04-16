@@ -25,7 +25,13 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
   </properties>
-
+  <repositories>
+    <repository>
+      <id>central</id>
+      <name>bintray</name>
+      <url>http://jcenter.bintray.com</url>
+    </repository>
+  </repositories>
   <developers>
     <developer>
       <name>Marten Christoph</name>
@@ -57,8 +63,17 @@
     </developerConnection>
     <tag>HEAD</tag>
   </scm>
-
   <dependencies>
+    <dependency>
+      <groupId>staatsbibliothek-berlin.hsp</groupId>
+      <artifactId>domainmodel</artifactId>
+      <version>0.5.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.wnameless</groupId>
+      <artifactId>json-flattener</artifactId>
+      <version>0.6.0</version>
+    </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-actuator</artifactId>
@@ -170,6 +185,13 @@
       <version>2.23.1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>net.andreinc.mockneat</groupId>
+      <artifactId>mockneat</artifactId>
+      <version>0.3.6</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <profiles>

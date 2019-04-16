@@ -52,13 +52,7 @@ public class SolrUpdateTest {
 
   @Before
   public void setUp() {
-    this.stream = new ActivityStream();
-    final UUID uuid = UUID.randomUUID();
-    stream.setId(uuid.toString());
-    stream.setObjectId(uuid.toString());
-    stream.setSummary("This is a target document");
-    final LocalDateTime localDate = LocalDateTime.now();
-    stream.setPublished(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(localDate));
+    this.stream = new RandomMessage().buildRandomActivityStreamMessage();
   }
 
   @Test
@@ -69,10 +63,29 @@ public class SolrUpdateTest {
       camelContext.start();
       producer.send(stream);
       latch.await(2, TimeUnit.SECONDS);
-      final String docId = stream.getObjectId();
+      final String docId = stream.getObject().getId();
       final QueryResponse response = solrClient.query("hsp", buildQueryParams(docId));
       final SolrDocumentList documents = response.getResults();
       assertEquals(1, documents.getNumFound());
+      camelContext.stop();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  @Test
+  public void testDocumentThreshold() {
+    final CountDownLatch latch = new CountDownLatch(3);
+    mockUpdate.whenAnyExchangeReceived(exchange -> latch.countDown());
+    try {
+      camelContext.start();
+      final int LOOPS = 20;
+      for (int i = 0; i < LOOPS; i++) {
+        final ActivityStream stream = new RandomMessage().buildRandomActivityStreamMessage();
+        producer.send(stream);
+      }
+      mockUpdate.expectedMessageCount(20);
+      mockUpdate.assertIsSatisfied();
       camelContext.stop();
     } catch (Exception e) {
       e.printStackTrace();

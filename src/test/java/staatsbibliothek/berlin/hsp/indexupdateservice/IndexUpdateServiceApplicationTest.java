@@ -57,13 +57,7 @@ public class IndexUpdateServiceApplicationTest {
 
   @Before
   public void setUp() {
-    this.stream = new ActivityStream();
-    final UUID uuid = UUID.randomUUID();
-    stream.setId(uuid.toString());
-    stream.setObjectId(uuid.toString());
-    stream.setSummary("This is a target document");
-    final LocalDateTime localDate = LocalDateTime.now();
-    stream.setPublished(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(localDate));
+    this.stream = new RandomMessage().buildRandomActivityStreamMessage();
   }
 
   @Test
@@ -71,7 +65,7 @@ public class IndexUpdateServiceApplicationTest {
     try {
       producer.send(stream);
       camelContext.start();
-      mockSerialize.expectedFileExists("/tmp/output.log/" + stream.getObjectId());
+      mockSerialize.expectedFileExists("/tmp/output.log/" + stream.getObject().getId());
       mockSerialize.assertIsSatisfied();
       camelContext.stop();
     } catch (Exception e) {
@@ -90,7 +84,7 @@ public class IndexUpdateServiceApplicationTest {
       stream.setType("Delete");
       producer.send(stream);
       latch.await(1, TimeUnit.SECONDS);
-      final String docId = stream.getObjectId();
+      final String docId = stream.getObject().getId();
       final QueryResponse response = solrClient.query("hsp", buildQueryParams(docId));
       final SolrDocumentList documents = response.getResults();
       assertEquals(0, documents.getNumFound());

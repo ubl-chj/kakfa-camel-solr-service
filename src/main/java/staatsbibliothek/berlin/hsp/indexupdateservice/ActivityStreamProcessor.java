@@ -1,6 +1,7 @@
 package staatsbibliothek.berlin.hsp.indexupdateservice;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.apache.camel.Exchange;
@@ -25,10 +26,14 @@ public class ActivityStreamProcessor implements Processor {
   }
 
   public void process(Exchange exchange) {
-    ActivityStream body = exchange.getIn().getBody(ActivityStream.class);
-    this.setHeader(exchange, "ActivityStreamId", body.getId());
-    this.setHeader(exchange, "ActivityStreamObjectId", body.getObjectId());
-    this.setHeader(exchange, "ActivityStreamType", body.getType());
+    Map body = exchange.getIn().getBody(Map.class);
+    setHeader(exchange, ACTIVITY_STREAM_ID, body.get(ID));
+    setHeader(exchange, ACTIVITY_STREAM_TYPE, body.get(TYPE));
+    if (body.containsKey(OBJECT) && body.get(OBJECT) instanceof Map) {
+      final Map object = (Map) body.get(OBJECT);
+      setHeader(exchange, ACTIVITY_STREAM_OBJECT_ID, object.get(ID));
+      setHeader(exchange, ACTIVITY_STREAM_OBJECT_TYPE, object.get(TYPE));
+    }
   }
 
   private void setHeader(Exchange exchange, String header, Object value) {

@@ -1,40 +1,28 @@
-/*
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package staatsbibliothek.berlin.hsp.indexupdateservice;
 
-import org.apache.solr.client.solrj.beans.Field;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import de.staatsbibliothek.berlin.hsp.domainmodel.entities.KulturObjektDokument;
+
+@JsonPropertyOrder({"context", "summary", "type", "published", "actor", "object", "target"})
 public class ActivityStream {
-  @Field("@context")
+  @JsonProperty("@context")
   private String context;
-  @Field("summary")
-  private String summary;
-  @Field("id")
+  @JsonProperty("id")
   private String id;
-  @Field("type")
+  @JsonProperty("summary")
+  private String summary;
+  @JsonProperty("type")
   private String type;
-  @Field("published")
+  @JsonProperty("published")
   private String published;
-  @Field("target_type")
-  private String target_type;
-  @Field("target_id")
-  private String target_id;
-  @Field("target_name")
-  private String target_name;
-  @Field("object_id")
-  private String object_id;
+  @JsonProperty("actor")
+  private Actor actor;
+  @JsonProperty
+  private Object object;
+  @JsonProperty
+  private Target target;
 
   public String getContext() {
     return context;
@@ -44,20 +32,20 @@ public class ActivityStream {
     this.context = context;
   }
 
-  public String getSummary() {
-    return summary;
-  }
-
-  public void setSummary(String summary) {
-    this.summary = summary;
-  }
-
   public String getId() {
     return id;
   }
 
   public void setId(String id) {
     this.id = id;
+  }
+
+  public String getSummary() {
+    return summary;
+  }
+
+  public void setSummary(String summary) {
+    this.summary = summary;
   }
 
   public String getType() {
@@ -76,35 +64,157 @@ public class ActivityStream {
     this.published = published;
   }
 
-  public String getTargetType() {
-    return target_type;
+  public Actor getActor() {
+    return actor;
   }
 
-  public void setTargetType(String type) {
-    this.target_type = target_type;
+  public void setActor(Actor actor) {
+    this.actor = actor;
   }
 
-  public String getTargetId() {
-    return target_id;
+  public Object getObject() {
+    return object;
   }
 
-  public void setTargetId(String target_id) {
-    this.target_id = target_id;
+  public void setObject(Object object) {
+    this.object = object;
   }
 
-  public String getTargetName() {
-    return target_name;
+  public Target getTarget() {
+    return target;
   }
 
-  public void setTargetName(String target_name) {
-    this.target_name = target_name;
+  public void setTarget(Target target) {
+    this.target = target;
   }
 
-  public String getObjectId() {
-    return object_id;
+  public static class Actor {
+    @JsonProperty
+    private Double type;
+    @JsonProperty
+    private String id;
+    @JsonProperty
+    private String name;
+    @JsonProperty
+    private String url;
+
+    public Double getType() {
+      return type;
+    }
+
+    public void setType(Double type) {
+      this.type = type;
+    }
+
+    public String getId() {
+      return id;
+    }
+
+    public void setId(String id) {
+      this.id = id;
+    }
+
+    public String getName() {
+      return name;
+    }
+
+    public void setName(String name) {
+      this.name = name;
+    }
+
+    public String getUrl() {
+      return url;
+    }
+
+    public void setUrl(String url) {
+      this.url = url;
+    }
   }
 
-  public void setObjectId(String object_id) {
-    this.object_id = object_id;
+  public static class Object {
+    @JsonProperty
+    private String type;
+    @JsonProperty
+    private String id;
+    @JsonProperty
+    private String name;
+    @JsonProperty
+    private String url;
+    @JsonProperty
+    private KulturObjektDokument content;
+
+    public String getType() {
+      return type;
+    }
+
+    public void setType(String type) {
+      this.type = type;
+    }
+
+    public String getId() {
+      return id;
+    }
+
+    public void setId(String id) {
+      this.id = id;
+    }
+
+    public String getName() {
+      return name;
+    }
+
+    public void setName(String name) {
+      this.name = name;
+    }
+
+    public String getUrl() {
+      return url;
+    }
+
+    public void setUrl(String url) {
+      this.url = url;
+    }
+
+    public KulturObjektDokument getContent() {
+      return this.content;
+    }
+
+    public void setContent(KulturObjektDokument content) {
+      this.content = content;
+    }
+  }
+
+  public static class Target {
+    @JsonProperty
+    private String type;
+    @JsonProperty
+    private String id;
+    @JsonProperty
+    private String name;
+
+    public String getType() {
+      return type;
+    }
+
+    public void setType(String type) {
+      this.type = type;
+    }
+
+    public String getId() {
+      return id;
+    }
+
+    public void setId(String id) {
+      this.id = id;
+    }
+
+    public String getName() {
+      return name;
+    }
+
+    public void setName(String name) {
+      this.name = name;
+    }
   }
 }
+

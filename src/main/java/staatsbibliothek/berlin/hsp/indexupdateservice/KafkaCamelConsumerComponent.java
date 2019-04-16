@@ -20,6 +20,10 @@ import static org.apache.camel.LoggingLevel.INFO;
 import static org.trellisldp.camel.ActivityStreamProcessor.ACTIVITY_STREAM_OBJECT_ID;
 import static org.trellisldp.camel.ActivityStreamProcessor.ACTIVITY_STREAM_TYPE;
 
+import com.github.wnameless.json.flattener.JsonFlattener;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.CamelContext;
@@ -27,7 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
-import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +40,8 @@ import org.springframework.stereotype.Component;
 public class KafkaCamelConsumerComponent extends RouteBuilder {
   private static final Logger LOGGER = LoggerFactory.getLogger(KafkaCamelConsumerComponent.class);
   private HttpSolrClient solrClient;
+  private final JdkHttpClient client = new JdkHttpClientImpl();
+
   private static final String KAFKA_ROUTE_URI =
       "kafka:{{kafka.topic}}?brokers={{kafka.bootstrap-servers}}"
           + "&maxPollRecords={{kafka.consumer.maxPollRecords}}"
@@ -57,19 +62,17 @@ public class KafkaCamelConsumerComponent extends RouteBuilder {
     from(KAFKA_ROUTE_URI)
         .routeId("FromKafka")
         .unmarshal()
-        .json(JsonLibrary.Jackson, ActivityStream.class)
+        .json(JsonLibrary.Jackson)
         .process(new ActivityStreamProcessor())
         .filter(header(ACTIVITY_STREAM_OBJECT_ID).isNotNull())
-        .process(e -> e.getIn().setHeader(
-            "SolrSearchId",
-            encode(
-                e.getIn().getHeader(ACTIVITY_STREAM_OBJECT_ID, String.class),
+        .process(e -> e.getIn().setHeader("SolrSearchId",
+            encode(e.getIn().getHeader(ACTIVITY_STREAM_OBJECT_ID, String.class),
                 StandardCharsets.UTF_8)))
         .choice()
-        .when(header(ACTIVITY_STREAM_TYPE).contains("Delete"))
-        .to("direct:delete.solr")
-        .otherwise()
-        .to("direct:update.solr");
+          .when(header(ACTIVITY_STREAM_TYPE).contains("Delete"))
+            .to("direct:delete.solr")
+          .otherwise()
+            .to("direct:update.solr");
     from("direct:delete.solr").routeId("SolrDelete")
         .log(INFO, LOGGER, "Deleting ${headers.ActivityStreamObjectId} from Solr")
         .process(exchange -> {
@@ -80,22 +83,26 @@ public class KafkaCamelConsumerComponent extends RouteBuilder {
         });
     from("direct:update.solr").routeId("SolrUpdate")
         .log(INFO, LOGGER, "Updating ${headers.ActivityStreamObjectId} in Solr")
+        .marshal()
+        .json(JsonLibrary.Jackson, true)
         .process(exchange -> {
           final String collection = getContext().resolvePropertyPlaceholders("{{kafka.consumer.group}}");
-          final ActivityStream stream = exchange.getIn().getBody(ActivityStream.class);
-          final UpdateResponse response = solrClient.addBean(collection, stream);
-          solrClient.commit(collection);
+          final String jsonActivityStream = exchange.getIn().getBody(String.class);
+          final byte[] flatJson = JsonFlattener.flatten(jsonActivityStream).getBytes(
+              StandardCharsets.UTF_8);
+          final InputStream jsonInput = new ByteArrayInputStream(flatJson);
+          // TODO get baseURI, context and params from configuration
+          final String uriString = "http://localhost:8983/solr/" + collection + "/update/json/docs?commit=true";
+          client.post(uriString, jsonInput, "application/json");
         })
         .to("direct:serialize");
     from("direct:serialize")
         .process(exchange -> {
-          exchange.getOut().setBody(exchange.getIn().getBody(ActivityStream.class));
+          exchange.getOut().setBody(exchange.getIn().getBody(String.class));
           final String filename = exchange.getIn().getHeader(
               ACTIVITY_STREAM_OBJECT_ID, String.class);
           exchange.getOut().setHeader(FILE_NAME, filename);
         })
-        .marshal()
-        .json(JsonLibrary.Jackson, true)
         .log(INFO, LOGGER, "Filename: ${headers[CamelFileName]}")
         .to("file://{{ius.serialization.log}}");
   }
