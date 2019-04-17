@@ -190,7 +190,6 @@
       <artifactId>mockneat</artifactId>
       <version>0.3.6</version>
       <scope>test</scope>
-      <systemPath>${basedir}/lib/mockneat-0.3.6.jar</systemPath>
     </dependency>
 
   </dependencies>
@@ -367,6 +366,7 @@
         <version>5.0.0-M2</version>
         <configuration>
           <format>ALL</format>
+          <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
         </configuration>
         <executions>
           <execution>
@@ -425,7 +425,7 @@
                   </mapper>
                 </data>
                 <data>
-                  <src>${project.build.directory}/classes/application.properties</src>
+                  <src>${project.build.directory}/classes/application.yml</src>
                   <type>file</type>
                   <conffile>true</conffile>
                   <mapper>
@@ -437,7 +437,7 @@
                   </mapper>
                 </data>
                 <data>
-                  <src>${project.build.directory}/classes/application-dev.properties</src>
+                  <src>${project.build.directory}/classes/application-dev.yml</src>
                   <type>file</type>
                   <conffile>true</conffile>
                   <mapper>
@@ -449,7 +449,7 @@
                   </mapper>
                 </data>
                 <data>
-                  <src>${project.build.directory}/classes/application-prod.properties</src>
+                  <src>${project.build.directory}/classes/application-prod.yml</src>
                   <type>file</type>
                   <conffile>true</conffile>
                   <mapper>
@@ -461,7 +461,7 @@
                   </mapper>
                 </data>
                 <data>
-                  <src>${project.build.directory}/classes/bootstrap.properties</src>
+                  <src>${project.build.directory}/classes/bootstrap.yml</src>
                   <type>file</type>
                   <conffile>true</conffile>
                   <mapper>
@@ -529,34 +529,34 @@
                   <type>link</type>
                   <symlink>true</symlink>
                   <linkName>
-                    /usr/local/SBB/usr/local/${project.artifactId}/application.properties
+                    /usr/local/SBB/usr/local/${project.artifactId}/application.yml
                   </linkName>
-                  <linkTarget>/etc/SBB/${project.artifactId}/application.properties
+                  <linkTarget>/etc/SBB/${project.artifactId}/application.yml
                   </linkTarget>
                 </data>
                 <data>
                   <type>link</type>
                   <symlink>true</symlink>
                   <linkName>
-                    /usr/local/SBB/usr/local/${project.artifactId}/application-dev.properties
+                    /usr/local/SBB/usr/local/${project.artifactId}/application-dev.yml
                   </linkName>
-                  <linkTarget>/etc/SBB/${project.artifactId}/application-dev.properties</linkTarget>
+                  <linkTarget>/etc/SBB/${project.artifactId}/application-dev.yml</linkTarget>
                 </data>
                 <data>
                   <type>link</type>
                   <symlink>true</symlink>
                   <linkName>
-                    /usr/local/SBB/usr/local/${project.artifactId}/application-prod.properties
+                    /usr/local/SBB/usr/local/${project.artifactId}/application-prod.yml
                   </linkName>
-                  <linkTarget>/etc/SBB/${project.artifactId}/application-prod.properties
+                  <linkTarget>/etc/SBB/${project.artifactId}/application-prod.yml
                   </linkTarget>
                 </data>
                 <data>
                   <type>link</type>
                   <symlink>true</symlink>
-                  <linkName>/usr/local/SBB/usr/local/${project.artifactId}/bootstrap.properties
+                  <linkName>/usr/local/SBB/usr/local/${project.artifactId}/bootstrap.yml
                   </linkName>
-                  <linkTarget>/etc/SBB/${project.artifactId}/bootstrap.properties</linkTarget>
+                  <linkTarget>/etc/SBB/${project.artifactId}/bootstrap.yml</linkTarget>
                 </data>
                 <data>
                   <type>link</type>
