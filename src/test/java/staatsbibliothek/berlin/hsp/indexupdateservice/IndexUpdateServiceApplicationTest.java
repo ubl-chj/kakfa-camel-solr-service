@@ -2,11 +2,8 @@ package staatsbibliothek.berlin.hsp.indexupdateservice;
 
 import static junit.framework.TestCase.assertEquals;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 

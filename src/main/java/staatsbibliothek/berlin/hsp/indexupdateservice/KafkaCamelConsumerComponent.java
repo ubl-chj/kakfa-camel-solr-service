@@ -85,8 +85,7 @@ public class KafkaCamelConsumerComponent extends RouteBuilder {
     from("direct:serialize")
         .process(exchange -> {
           exchange.getOut().setBody(exchange.getIn().getBody(String.class));
-          final String filename = exchange.getIn().getHeader(
-              ACTIVITY_STREAM_OBJECT_ID, String.class);
+          final String filename = exchange.getIn().getHeader(ACTIVITY_STREAM_OBJECT_ID, String.class);
           exchange.getOut().setHeader(FILE_NAME, filename);
         })
         .log(INFO, LOGGER, "Filename: ${headers[CamelFileName]}")

@@ -17,6 +17,8 @@ import de.staatsbibliothek.berlin.hsp.domainmodel.entities.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -63,7 +65,7 @@ public class RandomMessage {
     stream.setContext("https://www.w3.org/ns/activitystreams");
     stream.setId(this.objectId);
     stream.setSummary(this.summary);
-    stream.setPublished(this.localDate.toString());
+    stream.setPublished(buildNow());
     stream.setType("Create");
     final ActivityStream.Actor actor = new ActivityStream.Actor();
     actor.setId(this.actorId);
@@ -84,6 +86,12 @@ public class RandomMessage {
     target.setType(this.targetType);
     stream.setTarget(target);
     return stream;
+  }
+
+  private String buildNow() {
+    final LocalDateTime date = LocalDateTime.now();
+    final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    return date.format(formatter);
   }
 
   private String buildGnd() {
@@ -111,7 +119,7 @@ public class RandomMessage {
     final List<Image> imageList = new ArrayList<>();
     final Image bilder = new Image("imageId", "datepfad", "imageName", urls().get());
     imageList.add(bilder);
-    final Digitalisat digitalisat = new Digitalisat("digital001", "beschreibung",
+    final Digitalisat digitalisat = new Digitalisat("digital" + ints().range(10000, 100000).get(), "beschreibung",
         volltextList, imageList);
     digitalisatKod.add(digitalisat);
     final List<AttributsReferenz> attributRef = new ArrayList<>();
@@ -157,7 +165,7 @@ public class RandomMessage {
     schriften.add(schrift);
     final Beschreibungsdokument referenzID = new Beschreibungsdokument(
         null,
-        date,
+        LocalDateTime.of(this.localDate, LocalTime.of(0,0)),
         urheberList,
         authorList,
         typ,

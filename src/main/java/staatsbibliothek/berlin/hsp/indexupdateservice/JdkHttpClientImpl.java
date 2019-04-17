@@ -67,7 +67,6 @@ public class JdkHttpClientImpl implements JdkHttpClient {
       final HttpRequest req = HttpRequest.newBuilder(uri).headers("Content-Type", contentType).POST(
           ofInputStream(() -> stream)).build();
       final HttpResponse<String> response = client.send(req, ofString());
-      log.info("New Resource Location {}", response.headers().map().get("Location"));
       log.info(response.version() + " POST request to {} returned {}", uriString, response.statusCode());
     } catch (Exception ex) {
       throw new Exception(ex.toString(), ex.getCause());
