@@ -1,8 +1,15 @@
 package staatsbibliothek.berlin.hsp.indexupdateservice;
 
-import static net.andreinc.mockneat.unit.address.Countries.countries;
+import static net.andreinc.mockneat.types.enums.MarkovChainType.KAFKA;
+import static net.andreinc.mockneat.types.enums.MarkovChainType.LOREM_IPSUM;
+import static net.andreinc.mockneat.unit.address.Cities.cities;
+import static net.andreinc.mockneat.unit.networking.URLs.urls;
+import static net.andreinc.mockneat.unit.text.Markovs.markovs;
+import static net.andreinc.mockneat.unit.types.Ints.ints;
+import static net.andreinc.mockneat.unit.companies.Departments.departments;
 import static net.andreinc.mockneat.unit.id.UUIDs.uuids;
 import static net.andreinc.mockneat.unit.text.Strings.strings;
+import static net.andreinc.mockneat.unit.text.Words.words;
 import static net.andreinc.mockneat.unit.types.Doubles.doubles;
 import static net.andreinc.mockneat.unit.user.Names.names;
 
@@ -44,7 +51,7 @@ public class RandomMessage {
     this.actorName = names().last().get() + ", " + names().first().get();
     this.actorUrl = strings().get();
     this.objectId = uuids().get();
-    this.objectName = countries().names().get();
+    this.objectName = words().get();
     this.objectUrl = strings().get();
     this.targetId = uuids().get();
     this.targetType = strings().get();
@@ -66,7 +73,7 @@ public class RandomMessage {
     stream.setActor(actor);
     final ActivityStream.Object object = new ActivityStream.Object();
     object.setId(this.objectId);
-    object.setType("Article");
+    object.setType("KulturObjektDokument");
     object.setName(this.objectName);
     object.setContent(buildDoc());
     object.setUrl(this.objectUrl);
@@ -79,26 +86,30 @@ public class RandomMessage {
     return stream;
   }
 
+  private String buildGnd() {
+    return "https://d-nb.info/gnd/" + ints().range(10000, 1000000000).get();
+  }
+
   public KulturObjektDokument buildDoc() {
     final String kodID = UUID.randomUUID().toString();
-    final String gndID = "gnd123456";
+    final String gndID = buildGnd();
     final List<KulturObjektDokument> subKod = new ArrayList<>();
-    final Ort aufbewahrungOrt = new Ort(103, 102, "gnd103", "Ort103");
+    final Ort aufbewahrungOrt = new Ort(ints().get(), ints().get(), buildGnd(), cities().capitalsEurope().get());
     final List<EntstehungReferenz> enstehungsdaten = new ArrayList<>();
     final EntstehungReferenz entstehungReferenz = new EntstehungReferenz();
     enstehungsdaten.add(entstehungReferenz);
     final List<Beteiligte> besitzendeInstitutionen = new ArrayList<>();
-    final Koerperschaft koerperschaft = new Koerperschaft(101, "gnd101", "Koeperschaft101");
+    final Koerperschaft koerperschaft = new Koerperschaft(ints().get(), buildGnd(), departments().get());
     final Person person = new Person();
-    final Beteiligte beteiligte = new Beteiligte(1001, 12, koerperschaft, person);
+    final Beteiligte beteiligte = new Beteiligte(ints().get(), ints().get(), koerperschaft, person);
     besitzendeInstitutionen.add(beteiligte);
-    final String signatur = "SIGNATUR 12345";
+    final String signatur = "SIGNATUR " + ints().get();
     final List<Digitalisat> digitalisatKod = new ArrayList<>();
     final List<Volltext> volltextList = new ArrayList<>();
-    final Volltext volltext = new Volltext("volltextId", "beschreibung", "inhalt");
+    final Volltext volltext = new Volltext("volltextId", markovs().size(1024).type(LOREM_IPSUM).get(), "inhalt");
     volltextList.add(volltext);
     final List<Image> imageList = new ArrayList<>();
-    final Image bilder = new Image("imageId", "datepfad", "imageName", "imageUrl");
+    final Image bilder = new Image("imageId", "datepfad", "imageName", urls().get());
     imageList.add(bilder);
     final Digitalisat digitalisat = new Digitalisat("digital001", "beschreibung",
         volltextList, imageList);
@@ -106,10 +117,10 @@ public class RandomMessage {
     final List<AttributsReferenz> attributRef = new ArrayList<>();
     final LocalDateTime date = LocalDateTime.now();
     final List<Person> urheberList = new ArrayList<>();
-    final Person urheber = new Person(103, "gnd123456", "UrheberVorname", "UrheberNachname");
+    final Person urheber = new Person(ints().get(), buildGnd(), names().first().get(), names().last().get());
     urheberList.add(urheber);
     final List<Person> authorList = new ArrayList<>();
-    final Person author = new Person(104, "gnd123457", "AuthorVorname", "AuthorNachname");
+    final Person author = new Person(ints().get(), buildGnd(), names().first().get(), names().last().get());
     authorList.add(author);
     final Beschreibungsdokumenttyp typ = new Beschreibungsdokumenttyp("beschreibungsdokumenttyp");
     final List<Beteiligte> vorbesitzerList = new ArrayList<>();
@@ -122,27 +133,27 @@ public class RandomMessage {
     final Entstehung entstehungsDaten = new Entstehung();
     entstehungsDatenList.add(entstehungsDaten);
     final List<Koerperschaft> koerperschaften = new ArrayList<>();
-    final Koerperschaft koerperschaft1 = new Koerperschaft(102, "gnd102", "Koeperschaft102");
+    final Koerperschaft koerperschaft1 = new Koerperschaft(ints().get(), buildGnd(), departments().get());
     koerperschaften.add(koerperschaft1);
     final Katalog digitalisatKatalog = new Katalog();
     final List<Formtyp> formtypen = new ArrayList<>();
-    final Formtyp formtyp = new Formtyp(10001, 10002, "formTyp1", "a form type description");
+    final Formtyp formtyp = new Formtyp(ints().get(), ints().get(), "formTyp1", "a form type description");
     formtypen.add(formtyp);
     final List<Status> statuses = new ArrayList<>();
-    final Status status = new Status();
+    final Status status = new Status("status: " + words().get(), "status bsb: " + words().get());
     statuses.add(status);
     final List<Format> formats = new ArrayList<>();
-    final Format format = new Format();
+    final Format format = new Format("format: " + words().get(), "format typ: " + words().get(), "format bsb: " + words().get());
     formats.add(format);
     final List<Stoff> stoffe = new ArrayList<>();
     final Stoff stoff = new Stoff();
     stoffe.add(stoff);
     final List<Schreibsprache> schreibsprachen = new ArrayList<>();
     final Schreibsprache schreibsprache = new Schreibsprache(
-        4000, 40003, "Fraktur", "a Type", "description of Fraktur");
+        ints().get(), ints().get(), words().get(), words().get(), words().get());
     schreibsprachen.add(schreibsprache);
     final List<Schrift> schriften = new ArrayList<>();
-    final Schrift schrift = new Schrift();
+    final Schrift schrift = new Schrift(ints().get(), ints().get(), words().get(), words().get(), words().get());
     schriften.add(schrift);
     final Beschreibungsdokument referenzID = new Beschreibungsdokument(
         null,
@@ -160,17 +171,17 @@ public class RandomMessage {
         statuses,
         formats,
         stoffe,
-        "titel",
-        "beschreibungsFreitext",
-        0,
-        0,
-        10,
-        11,
+        markovs().size(64).type(KAFKA).get(),
+        markovs().size(1024).type(KAFKA).get(),
+        ints().get(),
+        ints().get(),
+        ints().get(),
+        ints().get(),
         schreibsprachen,
         schriften,
         null);
     final Annotation annotation = new Annotation();
-    final AttributsReferenz attributsReferenz = new AttributsReferenz(1, "attributeType",
+    final AttributsReferenz attributsReferenz = new AttributsReferenz(ints().get(), "attributeType",
         referenzID, annotation, "wert");
     attributRef.add(attributsReferenz);
     return new KulturObjektDokument(

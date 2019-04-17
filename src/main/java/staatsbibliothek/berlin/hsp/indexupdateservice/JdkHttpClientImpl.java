@@ -1,6 +1,7 @@
 package staatsbibliothek.berlin.hsp.indexupdateservice;
 
 import static java.net.http.HttpClient.Redirect.ALWAYS;
+import static java.net.http.HttpClient.Version.HTTP_1_1;
 import static java.net.http.HttpClient.Version.HTTP_2;
 import static java.net.http.HttpRequest.BodyPublishers.ofInputStream;
 import static java.net.http.HttpResponse.BodyHandlers.ofString;
@@ -54,7 +55,7 @@ public class JdkHttpClientImpl implements JdkHttpClient {
 
   static HttpClient getClient() {
     final ExecutorService exec = Executors.newCachedThreadPool();
-    return HttpClient.newBuilder().executor(exec).followRedirects(ALWAYS).build();
+    return HttpClient.newBuilder().executor(exec).followRedirects(ALWAYS).version(HTTP_1_1).build();
   }
 
   @Override
@@ -66,9 +67,8 @@ public class JdkHttpClientImpl implements JdkHttpClient {
       final HttpRequest req = HttpRequest.newBuilder(uri).headers("Content-Type", contentType).POST(
           ofInputStream(() -> stream)).build();
       final HttpResponse<String> response = client.send(req, ofString());
-      log.info("New Resource Location {}", String.valueOf(response.headers().map().get("Location")));
-      log.info(String.valueOf(response.version()) + " POST request to {} returned {}", uriString,
-          String.valueOf(response.statusCode()));
+      log.info("New Resource Location {}", response.headers().map().get("Location"));
+      log.info(response.version() + " POST request to {} returned {}", uriString, response.statusCode());
     } catch (Exception ex) {
       throw new Exception(ex.toString(), ex.getCause());
     }

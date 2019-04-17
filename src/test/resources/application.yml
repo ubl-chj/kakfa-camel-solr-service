@@ -1,5 +1,5 @@
 solr:
-  host: localhost
+  host: b-dev1054.pk.de
   port: 8983
   scheme: http
   context: solr
