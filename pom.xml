@@ -190,6 +190,7 @@
       <artifactId>mockneat</artifactId>
       <version>0.3.6</version>
       <scope>test</scope>
+      <systemPath>${basedir}/lib/mockneat-0.3.6.jar</systemPath>
     </dependency>
 
   </dependencies>
