@@ -116,6 +116,7 @@ public class RandomMessage {
         abs(ints().get()), abs(ints().get()), koerperschaft, person);
     besitzendeInstitutionen.add(beteiligte);
     final String signatur = "SIGNATUR " + abs(ints().get());
+    // Digitalisat
     final List<Digitalisat> digitalisatKod = new ArrayList<>();
     final List<Volltext> volltextList = new ArrayList<>();
     final Volltext volltext = new Volltext(
@@ -130,6 +131,7 @@ public class RandomMessage {
         "beschreibung",
         volltextList, imageList);
     digitalisatKod.add(digitalisat);
+    // attributRef
     final List<AttributsReferenz> attributRef = new ArrayList<>();
     final List<Person> urheberList = new ArrayList<>();
     final Person urheber = new Person(
@@ -141,10 +143,13 @@ public class RandomMessage {
     authorList.add(author);
     final Beschreibungsdokumenttyp typ = new Beschreibungsdokumenttyp("beschreibung:typ");
     final List<Beteiligte> vorbesitzerList = new ArrayList<>();
-    final Beteiligte vorbesitzer = new Beteiligte();
+    final Person vb = new Person(
+        abs(ints().get()), buildGnd(), names().first().get(), names().last().get());
+    final Beteiligte vorbesitzer = new Beteiligte(abs(ints().get()), abs(ints().get()), null, vb);
     vorbesitzerList.add(vorbesitzer);
     final List<Beteiligte> herstellerList = new ArrayList<>();
-    final Beteiligte hersteller = new Beteiligte();
+    final Koerperschaft kp = new Koerperschaft(abs(ints().get()), buildGnd(), departments().get());
+    final Beteiligte hersteller = new Beteiligte(abs(ints().get()), abs(ints().get()), kp, null);
     herstellerList.add(hersteller);
     final List<Entstehung> entstehungsDatenList = new ArrayList<>();
     final Entstehung entstehungsDaten = new Entstehung();
@@ -153,7 +158,7 @@ public class RandomMessage {
     final Koerperschaft koerperschaft1 = new Koerperschaft(
         abs(ints().get()), buildGnd(), departments().get());
     koerperschaften.add(koerperschaft1);
-    final Katalog digitalisatKatalog = new Katalog();
+    final Katalog digitalisatKatalog = new Katalog(abs(ints().get()), digitalisatKod);
     final List<Formtyp> formtypen = new ArrayList<>();
     final Formtyp formtyp = new Formtyp(
         abs(ints().get()), abs(ints().get()), "formTyp1", "a form type description");

@@ -18,7 +18,7 @@ public class SolrUpdateProcessor implements Processor {
   }
 
   public void process(Exchange exchange) throws Exception {
-    final String collection = exchange.getContext().resolvePropertyPlaceholders("{{kafka.consumer.group}}");
+    final String collection = exchange.getContext().resolvePropertyPlaceholders("{{solr.core}}");
     final String solrHost = exchange.getContext().resolvePropertyPlaceholders("{{solr.host}}");
     final String solrPort = exchange.getContext().resolvePropertyPlaceholders("{{solr.port}}");
     final String solrScheme = exchange.getContext().resolvePropertyPlaceholders("{{solr.scheme}}");
