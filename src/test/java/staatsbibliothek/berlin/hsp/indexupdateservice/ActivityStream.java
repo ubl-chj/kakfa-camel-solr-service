@@ -3,7 +3,7 @@ package staatsbibliothek.berlin.hsp.indexupdateservice;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-import de.staatsbibliothek.berlin.hsp.domainmodel.entities.KulturObjektDokument;
+import de.staatsbibliothek.berlin.hsp.domainmodel.entities.Dokument;
 
 @JsonPropertyOrder({"context", "summary", "type", "published", "actor", "object", "target"})
 public class ActivityStream {
@@ -141,7 +141,7 @@ public class ActivityStream {
     @JsonProperty
     private String url;
     @JsonProperty
-    private KulturObjektDokument content;
+    private Dokument content;
 
     public String getType() {
       return type;
@@ -175,11 +175,11 @@ public class ActivityStream {
       this.url = url;
     }
 
-    public KulturObjektDokument getContent() {
+    public Dokument getContent() {
       return this.content;
     }
 
-    public void setContent(KulturObjektDokument content) {
+    public void setContent(Dokument content) {
       this.content = content;
     }
   }

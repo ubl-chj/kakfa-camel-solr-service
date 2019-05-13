@@ -2,6 +2,8 @@ package staatsbibliothek.berlin.hsp.indexupdateservice;
 
 import static junit.framework.TestCase.assertEquals;
 
+import de.staatsbibliothek.berlin.hsp.domainmodel.messaging.ActivityStreamMessage;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -40,7 +42,7 @@ public class IndexUpdateServiceApplicationTest {
   CamelContext camelContext;
   @Autowired
   RouteBuilder kafkaCamelConsumerComponent;
-  private ActivityStream stream;
+  private ActivityStreamMessage stream;
   @EndpointInject(uri = "mock:direct:serialize")
   private MockEndpoint mockSerialize;
   @EndpointInject(uri = "mock:direct:delete.solr")
@@ -62,7 +64,7 @@ public class IndexUpdateServiceApplicationTest {
     try {
       producer.send(stream);
       camelContext.start();
-      mockSerialize.expectedFileExists("/tmp/output.log/" + stream.getObject().getId());
+      mockSerialize.expectedFileExists("/tmp/output.log/" + stream.getId());
       mockSerialize.assertIsSatisfied();
       camelContext.stop();
     } catch (Exception e) {

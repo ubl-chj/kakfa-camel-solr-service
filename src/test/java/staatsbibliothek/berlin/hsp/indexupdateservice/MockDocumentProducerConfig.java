@@ -1,5 +1,7 @@
 package staatsbibliothek.berlin.hsp.indexupdateservice;
 
+import de.staatsbibliothek.berlin.hsp.domainmodel.messaging.ActivityStreamMessage;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,12 +34,12 @@ public class MockDocumentProducerConfig {
   }
 
   @Bean
-  public ProducerFactory<String, ActivityStream> producerFactory() {
+  public ProducerFactory<String, ActivityStreamMessage> producerFactory() {
     return new DefaultKafkaProducerFactory<>(producerConfigs());
   }
 
   @Bean
-  public KafkaTemplate<String, ActivityStream> kafkaTemplate() {
+  public KafkaTemplate<String, ActivityStreamMessage> kafkaTemplate() {
     return new KafkaTemplate<>(producerFactory());
   }
 

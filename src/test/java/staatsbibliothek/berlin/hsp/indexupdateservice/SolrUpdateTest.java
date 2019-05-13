@@ -2,6 +2,8 @@ package staatsbibliothek.berlin.hsp.indexupdateservice;
 
 import static junit.framework.TestCase.assertEquals;
 
+import de.staatsbibliothek.berlin.hsp.domainmodel.messaging.ActivityStreamMessage;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -34,7 +36,7 @@ import org.springframework.test.annotation.DirtiesContext;
 @DirtiesContext
 @MockEndpoints
 public class SolrUpdateTest {
-  private ActivityStream stream;
+  private ActivityStreamMessage stream;
   private static final String SENDER_TOPIC = "hsp.t";
   @ClassRule
   public static EmbeddedKafkaRule embeddedKafka = new EmbeddedKafkaRule(
@@ -63,7 +65,7 @@ public class SolrUpdateTest {
       camelContext.start();
       producer.send(stream);
       latch.await(5, TimeUnit.SECONDS);
-      final String docId = stream.getObject().getId();
+      final String docId = stream.getId();
       final QueryResponse response = solrClient.query("hsp", buildQueryParams(docId));
       final SolrDocumentList documents = response.getResults();
       assertEquals(1, documents.getNumFound());

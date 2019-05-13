@@ -17,8 +17,8 @@ package staatsbibliothek.berlin.hsp.indexupdateservice;
 import static java.net.URLEncoder.encode;
 import static org.apache.camel.Exchange.FILE_NAME;
 import static org.apache.camel.LoggingLevel.INFO;
-import static org.trellisldp.camel.ActivityStreamProcessor.ACTIVITY_STREAM_OBJECT_ID;
 import static org.trellisldp.camel.ActivityStreamProcessor.ACTIVITY_STREAM_TYPE;
+import static staatsbibliothek.berlin.hsp.indexupdateservice.ActivityStreamProcessor.ACTIVITY_STREAM_ID;
 
 import java.nio.charset.StandardCharsets;
 
@@ -59,9 +59,9 @@ public class KafkaCamelConsumerComponent extends RouteBuilder {
         .unmarshal()
         .json(JsonLibrary.Jackson)
         .process(new ActivityStreamProcessor())
-        .filter(header(ACTIVITY_STREAM_OBJECT_ID).isNotNull())
+        .filter(header(ACTIVITY_STREAM_ID).isNotNull())
         .process(e -> e.getIn().setHeader("SolrSearchId",
-            encode(e.getIn().getHeader(ACTIVITY_STREAM_OBJECT_ID, String.class),
+            encode(e.getIn().getHeader(ACTIVITY_STREAM_ID, String.class),
                 StandardCharsets.UTF_8)))
         .choice()
           .when(header(ACTIVITY_STREAM_TYPE).contains("Delete"))
@@ -72,7 +72,7 @@ public class KafkaCamelConsumerComponent extends RouteBuilder {
         .log(INFO, LOGGER, "Deleting ${headers.ActivityStreamObjectId} from Solr")
         .process(exchange -> {
           final String collection = getContext().resolvePropertyPlaceholders("{{kafka.consumer.group}}");
-          final String id = exchange.getIn().getHeader(ACTIVITY_STREAM_OBJECT_ID, String.class);
+          final String id = exchange.getIn().getHeader(ACTIVITY_STREAM_ID, String.class);
           solrClient.deleteById(collection, id);
           solrClient.commit(collection);
         });
@@ -85,7 +85,7 @@ public class KafkaCamelConsumerComponent extends RouteBuilder {
     from("direct:serialize")
         .process(exchange -> {
           exchange.getOut().setBody(exchange.getIn().getBody(String.class));
-          final String filename = exchange.getIn().getHeader(ACTIVITY_STREAM_OBJECT_ID, String.class);
+          final String filename = exchange.getIn().getHeader(ACTIVITY_STREAM_ID, String.class);
           exchange.getOut().setHeader(FILE_NAME, filename);
         })
         .log(INFO, LOGGER, "Filename: ${headers[CamelFileName]}")

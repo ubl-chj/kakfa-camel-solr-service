@@ -1,5 +1,7 @@
 package staatsbibliothek.berlin.hsp.indexupdateservice;
 
+import de.staatsbibliothek.berlin.hsp.domainmodel.messaging.ActivityStreamMessage;
+
 import java.util.concurrent.CountDownLatch;
 
 import org.apache.camel.CamelContext;
@@ -42,7 +44,7 @@ public class ThresholdTest {
       camelContext.start();
       final int LOOPS = 20;
       for (int i = 0; i < LOOPS; i++) {
-        final ActivityStream stream = new RandomMessage().buildRandomActivityStreamMessage();
+        final ActivityStreamMessage stream = new RandomMessage().buildRandomActivityStreamMessage();
         producer.send(stream);
       }
       mockUpdate.expectedMessageCount(20);

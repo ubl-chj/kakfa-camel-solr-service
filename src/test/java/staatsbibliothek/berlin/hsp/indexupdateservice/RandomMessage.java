@@ -15,6 +15,8 @@ import static net.andreinc.mockneat.unit.types.Ints.ints;
 import static net.andreinc.mockneat.unit.user.Names.names;
 
 import de.staatsbibliothek.berlin.hsp.domainmodel.entities.*;
+import de.staatsbibliothek.berlin.hsp.domainmodel.messaging.ActivityStreamEnum;
+import de.staatsbibliothek.berlin.hsp.domainmodel.messaging.ActivityStreamMessage;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -61,7 +63,7 @@ public class RandomMessage {
     this.targetName = strings().get();
   }
 
-  public ActivityStream buildRandomActivityStreamMessage() {
+  public ActivityStream buildRandomActivityStream() {
     final ActivityStream stream = new ActivityStream();
     stream.setContext("https://www.w3.org/ns/activitystreams");
     stream.setId(this.objectId);
@@ -88,6 +90,16 @@ public class RandomMessage {
     stream.setTarget(target);
     return stream;
   }
+
+  public ActivityStreamMessage buildRandomActivityStreamMessage() {
+    KulturObjektDokument kod = new KulturObjektDokument();
+    kod.setSignatur("XYZ-1234");
+    final String uuid = UUID.randomUUID().toString();
+    kod.setId(uuid);
+    return new ActivityStreamMessage(uuid, ActivityStreamEnum.ADD.term(),
+        ActivityStreamEnum.KULTUROBJEKTDOKUMENT.term(), kod, buildNow());
+  }
+
 
   private String buildNow() {
     final LocalDateTime date = LocalDateTime.now();
@@ -183,7 +195,7 @@ public class RandomMessage {
     schriften.add(schrift);
     final Beschreibungsdokument referenzID = new Beschreibungsdokument(
         null,
-        LocalDateTime.of(this.localDate, LocalTime.of(0, 0)),
+        null,
         urheberList,
         authorList,
         typ,

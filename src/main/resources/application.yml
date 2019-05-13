@@ -1,5 +1,5 @@
 solr:
-  host: localhost
+  host: b-dev1054.pk.de
   port: 8983
   scheme: http
   context: solr
@@ -8,7 +8,7 @@ kafka:
   bootstrap-servers: b-dev1044.pk.de:9092,b-dev1045.pk.de:9092,b-dev1048.pk.de:9092
   dual.commit.enabled: false
   offsets.storage: kafka
-  topic: hsp.t
+  topic: development
   consumer:
     consumersCount: 1
     group: hsp
